@@ -1,0 +1,20 @@
+// hola.nya — primer programa en NyanSharp uwu~
+onegai sekai nya
+
+oshiro Hola
+{
+    minna nakama Programa
+    {
+        minna zutto nanimo hajimeru(kotoba[] args)
+        {
+            iu("Konnichiwa, sekai~! (◕‿◕✿)") nya
+            sasayaku("¿Cómo te llamas, onii-chan? ") nya
+            kotoba nombre = kiku() nya
+            moshi (nombre == nai || nombre == "")
+            {
+                nombre = "senpai" nya
+            }
+            iu($"Yatta~! Encantada, {nombre}-kun desu!") nya
+        }
+    }
+}

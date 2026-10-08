@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#FFF0F5"/>
+  <path d="M24 46 L36 16 L54 36 H74 L92 16 L104 46 V84 A40 32 0 0 1 24 84 Z" fill="#E8639A"/>
+  <circle cx="48" cy="70" r="6" fill="#2B1F2B"/><circle cx="80" cy="70" r="6" fill="#2B1F2B"/>
+  <path d="M56 86 Q64 94 72 86" stroke="#2B1F2B" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M64 82 L59 76 H69 Z" fill="#2B1F2B"/>
+  <text x="64" y="118" font-family="sans-serif" font-weight="900" font-size="18" text-anchor="middle" fill="#E8639A">nya</text>
+</svg>

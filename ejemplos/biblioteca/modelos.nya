@@ -1,0 +1,30 @@
+onegai sekai nya
+
+oshiro biblioteca
+{
+    // record -> kiroku, required -> hitsuyou, init -> hajime
+    minna kiroku Libro(kotoba Titulo, kotoba Autor, kazu Anio)
+    {
+        minna hontou EsClasico => Anio < 1950 nya
+    }
+
+    minna nakama Estanteria
+    {
+        himitsu kawaranai List<Libro> libros = atarashii() nya
+        minna dekigoto Action<Libro> AlAnadir nya          // event -> dekigoto
+
+        minna nanimo Anadir(ippai Libro[] nuevos)            // params -> ippai
+        {
+            hitotsuzutsu (nanika l naka nuevos) { libros.Add(l) nya AlAnadir?.Invoke(l) nya }
+        }
+
+        // yield -> ageteku, where (generic) -> doko
+        minna IEnumerable<T> Filtrar<T>(Func<Libro, hontou> cond, Func<Libro, T> proy) doko T : notnull
+        {
+            hitotsuzutsu (nanika l naka libros) moshi (cond(l)) ageteku kaeru proy(l) nya
+        }
+
+        minna kazu Total => libros.Count nya
+        minna IReadOnlyList<Libro> Todos => libros nya
+    }
+}

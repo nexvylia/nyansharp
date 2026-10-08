@@ -1,0 +1,44 @@
+onegai sekai nya
+onegai Newtonsoft.Json nya
+
+oshiro biblioteca
+{
+    minna nakama Programa
+    {
+        minna zutto nanimo hajimeru(kotoba[] args)
+        {
+            nanika e = atarashii Estanteria() nya
+            e.AlAnadir += l => iu($"  + {l.Titulo} ({l.Anio})") nya
+
+            e.Anadir(
+                atarashii Libro("Kimi no Na wa", "Makoto Shinkai", 2016),
+                atarashii Libro("Kokoro", "Natsume Soseki", 1914),
+                atarashii Libro("Yo, robot", "Isaac Asimov", 1950)
+            ) nya
+
+            // with -> tomoni (copiar record cambiando algo)
+            nanika reedicion = e.Todos[1] tomoni { Anio = 2020 } nya
+            iu($"reedición: {reedicion}") nya
+
+            // nameof -> namae, switch expression con when -> toki
+            hitotsuzutsu (nanika l naka e.Todos)
+            {
+                kotoba etiqueta = l erabu
+                {
+                    { EsClasico: hai } => "clásico",
+                    { Anio: > 2000 } toki l.Autor.Contains("Shinkai") => "anime",
+                    _ => "normal"
+                } nya
+                iu($"{namae(l.Titulo)}={l.Titulo}: {etiqueta}") nya
+            }
+
+            nanika clasicos = e.Filtrar(l => l.EsClasico, l => l.Titulo).ToList() nya
+            iu($"clásicos: {string.Join(", ", clasicos)}") nya
+
+            // NuGet: Newtonsoft.Json
+            kotoba json = JsonConvert.SerializeObject(e.Todos, Formatting.Indented) nya
+            iu(json) nya
+            iu($"args recibidos: {args.Length}") nya
+        }
+    }
+}

@@ -1,0 +1,324 @@
+<title>NyanSharp</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#FFF7F9; --paper:#FFFFFF; --ink:#3B2A36; --ink-2:#7A6272; --line:#F1DCE4;
+  --sakura:#E8639A; --sakura-soft:#FDE7EF; --mint:#2FA88E; --mint-soft:#E2F5EF;
+  --lav:#7C5CE6; --lav-soft:#EEE9FC; --code-bg:#2B1F2B; --code-ink:#F6E9EF;
+  --k-kw:#FF8FBF; --k-type:#8FE3CF; --k-str:#FFD98A; --k-fn:#B8A6FF; --k-cm:#9B8798; --k-nya:#FFB4D2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B1219; --paper:#241923; --ink:#F4E6EC; --ink-2:#B79FAD; --line:#3A2937;
+    --sakura:#FF7FB3; --sakura-soft:#3A2233; --mint:#5CD4B7; --mint-soft:#1C332D;
+    --lav:#B39DFF; --lav-soft:#2B2340; --code-bg:#130C12; --code-ink:#F6E9EF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B1219; --paper:#241923; --ink:#F4E6EC; --ink-2:#B79FAD; --line:#3A2937;
+  --sakura:#FF7FB3; --sakura-soft:#3A2233; --mint:#5CD4B7; --mint-soft:#1C332D;
+  --lav:#B39DFF; --lav-soft:#2B2340; --code-bg:#130C12; --code-ink:#F6E9EF;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,"Segoe UI",system-ui,sans-serif;font-size:16px;line-height:1.65}
+a{color:var(--sakura);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--lav);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:"Zen Maru Gothic",Nunito,sans-serif;text-wrap:balance;line-height:1.2;margin:0}
+h2{font-size:1.75rem;font-weight:900;margin:3.5rem 0 1rem;padding-top:.5rem}
+h2 small{font-family:"JetBrains Mono",monospace;font-size:.75rem;font-weight:400;color:var(--ink-2);margin-left:.75rem;letter-spacing:.04em}
+h3{font-size:1.15rem;font-weight:700;margin:2rem 0 .6rem}
+p{margin:.6rem 0;max-width:68ch}
+code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.88em;background:var(--sakura-soft);color:var(--ink);padding:.1em .4em;border-radius:6px}
+pre{background:var(--code-bg);color:var(--code-ink);padding:1.1rem 1.3rem;border-radius:14px;overflow-x:auto;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.86rem;line-height:1.6;margin:1rem 0}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.kw{color:var(--k-kw)} .ty{color:var(--k-type)} .st{color:var(--k-str)} .fn{color:var(--k-fn)} .cm{color:var(--k-cm);font-style:italic} .ny{color:var(--k-nya);font-weight:600}
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);max-width:1180px;margin:0 auto;gap:3rem;padding:0 1.5rem}
+nav{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:2rem 0;border-right:1px solid var(--line)}
+nav .logo{font-family:"Zen Maru Gothic",sans-serif;font-weight:900;font-size:1.35rem;color:var(--sakura);display:block;margin-bottom:1.5rem}
+nav .logo span{color:var(--ink-2);font-weight:500;font-size:.8rem;display:block;font-family:"JetBrains Mono",monospace}
+nav a.item{display:block;padding:.3rem .6rem;margin:.1rem 0;border-radius:8px;color:var(--ink-2);font-weight:600;font-size:.92rem}
+nav a.item:hover{background:var(--sakura-soft);color:var(--ink);text-decoration:none}
+nav .grp{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);margin:1.2rem .6rem .3rem;font-weight:700}
+main{padding:2rem 0 6rem;min-width:0}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:2.5rem;align-items:center;padding:1.5rem 0 1rem}
+.hero h1{font-size:clamp(2.4rem,5vw,3.6rem);font-weight:900;color:var(--ink)}
+.hero h1 em{font-style:normal;color:var(--sakura)}
+.hero .lead{font-size:1.1rem;color:var(--ink-2);max-width:40ch}
+.badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.badge{font-family:"JetBrains Mono",monospace;font-size:.72rem;padding:.25rem .6rem;border-radius:999px;background:var(--mint-soft);color:var(--mint);font-weight:600}
+.badge.lav{background:var(--lav-soft);color:var(--lav)}
+.hero pre{margin:0;box-shadow:0 20px 50px -20px rgba(232,99,154,.35)}
+.callout{border-left:4px solid var(--sakura);background:var(--paper);padding:.8rem 1.1rem;border-radius:0 12px 12px 0;margin:1rem 0;max-width:72ch}
+.callout.mint{border-color:var(--mint)}
+.callout b{color:var(--sakura)} .callout.mint b{color:var(--mint)}
+.cmds{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin:1rem 0}
+.cmd{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem}
+.cmd code{display:block;background:var(--code-bg);color:var(--code-ink);padding:.5rem .7rem;border-radius:8px;margin-bottom:.5rem;font-size:.82rem}
+.cmd p{margin:0;font-size:.9rem;color:var(--ink-2)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th{text-align:left;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);padding:.7rem 1rem;border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0}
+td{padding:.5rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.n{font-family:"JetBrains Mono",monospace;font-weight:600;color:var(--sakura)}
+td.c{font-family:"JetBrains Mono",monospace;color:var(--lav)}
+td.m{color:var(--ink-2);font-size:.85rem}
+.cat{display:inline-block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .5rem;border-radius:999px;background:var(--mint-soft);color:var(--mint);font-weight:700}
+.search{width:100%;max-width:420px;padding:.6rem .9rem;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:inherit;margin:.5rem 0 1rem}
+.search::placeholder{color:var(--ink-2)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.two pre{margin:0}
+.two .lbl{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:700;margin-bottom:.4rem}
+.err{font-family:"JetBrains Mono",monospace;font-size:.84rem;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:.9rem 1.1rem;white-space:pre-wrap}
+.err .e{color:var(--sakura)}
+.faq dt{font-weight:700;margin-top:1rem} .faq dd{margin:.2rem 0 0;color:var(--ink-2);max-width:68ch}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--ink-2);font-size:.85rem}
+@media (max-width:820px){
+  .layout{grid-template-columns:1fr;gap:0}
+  nav{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:1.2rem 0}
+  nav .item{display:inline-block} nav .grp{display:none}
+  .hero,.two{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:no-preference){ a.item{transition:background .15s} }
+</style>
+
+<div class="layout">
+<nav>
+  <a class="logo" href="#top">NyanSharp<span>.nya · v1.0</span></a>
+  <div class="grp">Empezar</div>
+  <a class="item" href="#que-es">Qué es</a>
+  <a class="item" href="#instalar">Instalación</a>
+  <a class="item" href="#compilar">Compilar</a>
+  <a class="item" href="#vscode">VS Code</a>
+  <div class="grp">Lenguaje</div>
+  <a class="item" href="#proyectos">Proyectos y NuGet</a>
+  <a class="item" href="#reglas">Reglas</a>
+  <a class="item" href="#diccionario">Diccionario</a>
+  <a class="item" href="#ejemplos">Ejemplos</a>
+  <a class="item" href="#errores">Errores</a>
+  <div class="grp">Más</div>
+  <a class="item" href="#como-funciona">Cómo funciona</a>
+  <a class="item" href="#faq">Preguntas</a>
+</nav>
+
+<main id="top">
+<section class="hero">
+  <div>
+    <h1>C#, pero hablado <em>nya~</em></h1>
+    <p class="lead">NyanSharp es un lenguaje compilado que se escribe con las palabras de una loli kawaii de anime y produce un ejecutable nativo de .NET. Toda la potencia de C#; ninguna de sus palabras clave.</p>
+    <div class="badges"><span class="badge">compilado · .NET 8</span><span class="badge lav">extensión .nya</span><span class="badge lav">VS Code</span></div>
+  </div>
+<pre><code><span class="cm">// hola.nya</span>
+<span class="kw">onegai</span> <span class="fn">sekai</span> <span class="ny">nya</span>
+
+<span class="kw">oshiro</span> Hola
+{
+    <span class="kw">minna nakama</span> Programa
+    {
+        <span class="kw">minna zutto</span> <span class="ty">nanimo</span> <span class="fn">hajimeru</span>()
+        {
+            <span class="fn">iu</span>(<span class="st">"Konnichiwa, sekai~! (◕‿◕✿)"</span>) <span class="ny">nya</span>
+        }
+    }
+}</code></pre>
+</section>
+
+<h2 id="que-es">Qué es NyanSharp</h2>
+<p>Un dialecto de C# con vocabulario propio. El compilador <code>nyac</code> traduce el archivo <code>.nya</code> a C# real y llama a .NET para generar un binario. Por eso funciona <strong>todo</strong> lo que funciona en C# 12: genéricos, LINQ, async, pattern matching, records, tuplas, la librería estándar completa y cualquier paquete NuGet que añadas.</p>
+<div class="callout"><b>Idea clave.</b> Solo cambian las palabras clave y el punto y coma. Los nombres de tipos del framework (<code>List</code>, <code>Console</code>, <code>Exception</code>…), los operadores y la sintaxis siguen siendo los de C#.</div>
+
+<h2 id="instalar">Instalación</h2>
+<p>Necesitas <strong>.NET SDK 8</strong> y <strong>Python 3</strong>. En este equipo ya está todo colocado:</p>
+<div class="cmds">
+  <div class="cmd"><code>~/nyansharp/nyac</code><p>El compilador. Un solo archivo Python.</p></div>
+  <div class="cmd"><code>~/bin/nyac</code><p>Enlace en el PATH. Escribe <code>nyac</code> desde cualquier carpeta.</p></div>
+  <div class="cmd"><code>~/.vscode/extensions/nexvylia.nyansharp-0.1.0</code><p>Extensión de VS Code: colores y snippets.</p></div>
+</div>
+<p>Para llevarlo a otra máquina: copia la carpeta <code>~/nyansharp</code>, instala .NET 8 y crea el enlace:</p>
+<pre><code>ln -s ~/nyansharp/nyac ~/bin/nyac
+cp -r ~/nyansharp/vscode-ext ~/.vscode/extensions/nexvylia.nyansharp-0.1.0</code></pre>
+
+<h2 id="compilar">Compilar y ejecutar</h2>
+<div class="cmds">
+  <div class="cmd"><code>nyac archivo.nya</code><p>Compila. El ejecutable queda en <code>./bin/archivo</code> junto al fuente.</p></div>
+  <div class="cmd"><code>nyac run archivo.nya</code><p>Compila y ejecuta en el acto.</p></div>
+  <div class="cmd"><code>nyac cs archivo.nya</code><p>Muestra el C# generado sin compilar. Útil para depurar.</p></div>
+  <div class="cmd"><code>nyac diccionario</code><p>Lista las 101 palabras. Admite filtro: <code>nyac diccionario for</code>.</p></div>
+</div>
+<p>La primera compilación tarda unos segundos porque .NET restaura el proyecto. Las siguientes van en torno a un segundo. Los ficheros intermedios viven en <code>.nyabuild/</code>, que puedes borrar sin miedo.</p>
+
+<h2 id="vscode">Uso en VS Code</h2>
+<p>Abre cualquier archivo <code>.nya</code> y tendrás resaltado de sintaxis. Si no aparece, reinicia VS Code una vez tras la instalación.</p>
+<h3>Atajos</h3>
+<p>Con la carpeta <code>~/nyansharp</code> abierta (trae <code>.vscode/tasks.json</code>):</p>
+<div class="cmds">
+  <div class="cmd"><code>Ctrl + Shift + B</code><p>Compila el archivo activo. Los errores aparecen en la pestaña <em>Problemas</em> con enlace a la línea.</p></div>
+  <div class="cmd"><code>Terminal → Ejecutar tarea de prueba</code><p>Compila y ejecuta en el terminal integrado.</p></div>
+</div>
+<h3>Snippets</h3>
+<p>Escribe el prefijo y pulsa Tab: <code>programa</code> (esqueleto completo), <code>nakama</code> (clase), <code>moshi</code> (if), <code>kurikaeshi</code> (for), <code>hitotsuzutsu</code> (foreach), <code>ganbaru</code> (try/catch).</p>
+<p>Para usar las tareas en otro proyecto, copia <code>~/nyansharp/.vscode/tasks.json</code> a su carpeta <code>.vscode/</code>.</p>
+
+<h2 id="proyectos">Proyectos y paquetes NuGet</h2>
+<p>Un archivo suelto vale para empezar. Para programas de verdad, crea un proyecto: una carpeta con varios <code>.nya</code> y un <code>nyansharp.json</code>.</p>
+<div class="cmds">
+  <div class="cmd"><code>nyac new miapp</code><p>Crea <code>miapp/</code> con <code>nyansharp.json</code>, <code>main.nya</code> y <code>.gitignore</code>.</p></div>
+  <div class="cmd"><code>nyac build</code><p>Compila todos los <code>.nya</code> de la carpeta (y subcarpetas) en un solo ejecutable.</p></div>
+  <div class="cmd"><code>nyac run -- arg1 arg2</code><p>Compila y ejecuta pasando argumentos a <code>hajimeru(kotoba[] args)</code>.</p></div>
+  <div class="cmd"><code>nyac add Newtonsoft.Json</code><p>Añade un paquete NuGet. Busca la última versión, o pásala: <code>nyac add Dapper 2.1.35</code>.</p></div>
+</div>
+<pre><code><span class="cm">// nyansharp.json</span>
+{
+  <span class="st">"nombre"</span>: <span class="st">"miapp"</span>,
+  <span class="st">"tipo"</span>: <span class="st">"exe"</span>,            <span class="cm">// "exe" o "lib" (genera una .dll)</span>
+  <span class="st">"paquetes"</span>: { <span class="st">"Newtonsoft.Json"</span>: <span class="st">"13.0.3"</span> },
+  <span class="st">"nullable"</span>: <span class="kw">iie</span>
+}</code></pre>
+<div class="callout mint"><b>Ejemplo completo.</b> <code>~/nyansharp/ejemplos/biblioteca</code>: dos archivos, records, eventos, <code>yield</code>, <code>with</code>, pattern matching con <code>when</code> y serialización JSON con Newtonsoft. Ejecútalo con <code>nyac run ejemplos/biblioteca</code>.</div>
+<h3>Cobertura de C#</h3>
+<p>Las 101 palabras cubren todas las palabras clave de C# 12, incluidas <code>record</code>, <code>yield</code>, <code>lock</code>, <code>params</code>, <code>delegate</code>, <code>event</code>, <code>operator</code>, <code>implicit</code>/<code>explicit</code>, <code>unsafe</code>, <code>stackalloc</code> y los tipos sin signo. Todo lo que no es palabra clave (LINQ, Task, List, atributos, NuGet) se usa tal cual.</p>
+<h3><code>nyac check</code></h3>
+<p>Avisa si has llamado a una variable con una palabra reservada de C# (por ejemplo <code>kazu int = 3</code>). Solución: renómbrala o escríbela como <code>@int</code>.</p>
+
+<h2 id="reglas">Reglas del lenguaje</h2>
+<h3>1. El punto y coma es <code>nya</code></h3>
+<div class="two">
+  <div><div class="lbl">NyanSharp</div><pre><code><span class="ty">kazu</span> edad = 14 <span class="ny">nya</span>
+<span class="fn">iu</span>(edad) <span class="ny">nya</span></code></pre></div>
+  <div><div class="lbl">C# generado</div><pre><code><span class="ty">int</span> edad = 14;
+Console.WriteLine(edad);</code></pre></div>
+</div>
+<p>Dentro de un <code>for</code> se admite el <code>;</code> normal para separar las tres partes. También puedes escribir <code>;</code> en cualquier sitio si tienes prisa: el compilador lo acepta.</p>
+
+<h3>2. Las virgulillas <code>~</code> son decoración</h3>
+<p>Cualquier <code>~</code> fuera de una cadena o comentario se ignora. Sirve para dar entonación: <code>kaeru 0 nya~</code>. Dentro de comillas se conserva tal cual.</p>
+
+<h3>3. Cadenas y comentarios no se traducen</h3>
+<p>El compilador nunca toca el texto de <code>"…"</code>, <code>'x'</code> ni de los comentarios. Puedes escribir «nya» o «desu» en un texto sin que pase nada. La única excepción son los huecos <code>{…}</code> de las cadenas interpoladas <code>$"…"</code>: ahí sí se traduce, para que <code>$"{kazu.MaxValue}"</code> funcione.</p>
+
+<h3>4. Los identificadores propios son libres</h3>
+<p>Cualquier palabra que no esté en el diccionario pasa intacta: nombres de variables, clases, métodos y todo el framework de .NET. Si necesitas un nombre que coincide con una palabra clave, antepón <code>@</code>: <code>kotoba @kazu = "x" nya</code>.</p>
+
+<h3>5. Entrada y salida</h3>
+<div class="tablewrap"><table>
+<tr><th>NyanSharp</th><th>C#</th><th>Uso</th></tr>
+<tr><td class="n">iu(x)</td><td class="c">Console.WriteLine(x)</td><td class="m">imprime con salto de línea</td></tr>
+<tr><td class="n">sasayaku(x)</td><td class="c">Console.Write(x)</td><td class="m">imprime sin salto («susurra»)</td></tr>
+<tr><td class="n">kiku()</td><td class="c">Console.ReadLine()</td><td class="m">lee una línea del teclado</td></tr>
+<tr><td class="n">hajimeru</td><td class="c">Main</td><td class="m">punto de entrada del programa</td></tr>
+</table></div>
+
+<h2 id="diccionario">Diccionario completo <small>101 palabras</small></h2>
+<p>Cada palabra viene del habla kawaii típica del anime. La columna «significado» explica de dónde sale.</p>
+<input class="search" id="q" type="search" placeholder="Buscar: if, nakama, string…" aria-label="Buscar en el diccionario">
+<div class="tablewrap"><table id="dic">
+<thead><tr><th>NyanSharp</th><th>C#</th><th>Significado</th><th>Grupo</th></tr></thead>
+<tbody></tbody>
+</table></div>
+
+<h2 id="ejemplos">Ejemplos</h2>
+<h3>Clases, herencia e interfaces</h3>
+<pre><code><span class="kw">minna yakusoku</span> IMascota                       <span class="cm">// interface (una promesa)</span>
+{
+    <span class="ty">kotoba</span> Nombre { <span class="kw">choudai</span>; }
+    <span class="ty">nanimo</span> Hablar() <span class="ny">nya</span>
+}
+
+<span class="kw">minna yume nakama</span> Animal : IMascota          <span class="cm">// clase abstracta (un sueño)</span>
+{
+    <span class="kw">minna</span> <span class="ty">kotoba</span> Nombre { <span class="kw">choudai</span>; <span class="kw">himitsu ageru</span>; }
+    <span class="kw">mamoru</span> Animal(<span class="ty">kotoba</span> nombre) { Nombre = nombre <span class="ny">nya</span> }
+    <span class="kw">minna yume</span> <span class="ty">nanimo</span> Hablar() <span class="ny">nya</span>
+}
+
+<span class="kw">minna nakama</span> Gatita : Animal
+{
+    <span class="kw">minna</span> Gatita(<span class="ty">kotoba</span> nombre) : <span class="kw">okaasan</span>(nombre) { }   <span class="cm">// base = okaasan (mamá)</span>
+    <span class="kw">minna kakikaeru</span> <span class="ty">nanimo</span> Hablar() => <span class="fn">iu</span>(<span class="st">$"{Nombre}: nyaa~"</span>) <span class="ny">nya</span>
+}</code></pre>
+
+<h3>Control de flujo</h3>
+<pre><code><span class="kw">kurikaeshi</span> (<span class="ty">kazu</span> i = 1; i <= 5; i++)
+{
+    <span class="kw">moshi</span> (i % 2 == 0)      <span class="fn">iu</span>(<span class="st">$"{i} es par desu~"</span>) <span class="ny">nya</span>
+    <span class="kw">janakya moshi</span> (i == 5)  <span class="fn">iu</span>(<span class="st">$"{i} es el último!"</span>) <span class="ny">nya</span>
+    <span class="kw">janakya</span>                 <span class="fn">iu</span>(<span class="st">$"{i} es impar uwu"</span>) <span class="ny">nya</span>
+}
+
+<span class="kw">hitotsuzutsu</span> (<span class="ty">nanika</span> m <span class="kw">naka</span> mascotas) m.Hablar() <span class="ny">nya</span>
+
+<span class="kw">erabu</span> (humor)
+{
+    <span class="kw">baai</span> Humor.Feliz:  <span class="fn">iu</span>(<span class="st">"está feliz~"</span>) <span class="ny">nya</span> <span class="kw">yamete</span> <span class="ny">nya</span>
+    <span class="kw">futsuu</span>:            <span class="fn">iu</span>(<span class="st">"???"</span>) <span class="ny">nya</span>         <span class="kw">yamete</span> <span class="ny">nya</span>
+}</code></pre>
+
+<h3>Errores</h3>
+<pre><code><span class="kw">ganbaru</span>                                   <span class="cm">// try (¡lo intento!)</span>
+{
+    <span class="kw">moshi</span> (vidas <= 0)
+        <span class="kw">nageru atarashii</span> InvalidOperationException(<span class="st">"¡Baka!"</span>) <span class="ny">nya</span>
+}
+<span class="kw">daijoubu</span> (Exception ex)                   <span class="cm">// catch (no pasa nada)</span>
+{
+    <span class="fn">iu</span>(ex.Message) <span class="ny">nya</span>
+}
+<span class="kw">owari</span> { <span class="fn">iu</span>(<span class="st">"fin"</span>) <span class="ny">nya</span> }                 <span class="cm">// finally</span></code></pre>
+
+<h3>Pattern matching, out y tuplas</h3>
+<pre><code><span class="kw">moshi</span> (m <span class="kw">desu</span> Conejita c) <span class="fn">iu</span>(c.Nombre) <span class="ny">nya</span>             <span class="cm">// is</span>
+<span class="ty">nanika</span> g = m <span class="kw">toshite</span> Gatita <span class="ny">nya</span>                          <span class="cm">// as</span>
+<span class="kw">moshi</span> (<span class="ty">kazu</span>.TryParse(<span class="st">"42"</span>, <span class="kw">soto</span> <span class="ty">nanika</span> v)) <span class="fn">iu</span>(v) <span class="ny">nya</span>  <span class="cm">// out</span>
+(<span class="ty">kotoba</span> a, <span class="ty">kazu</span> b) = (<span class="st">"respuesta"</span>, 42) <span class="ny">nya</span></code></pre>
+<p>El programa completo está en <code>~/nyansharp/ejemplos/kawaii.nya</code>. Pruébalo con <code>nyac run</code>.</p>
+
+<h2 id="errores">Mensajes de error</h2>
+<p>Los errores del compilador de C# se muestran con la <strong>línea y columna del archivo .nya</strong>, porque la traducción conserva las líneas una a una. El código (CS0029, CS0103…) es el oficial de Microsoft: puedes buscarlo tal cual.</p>
+<div class="err">  (≧◡≦) compilando error.nya ...
+  (>_<) gomen nasai~ hay errores:
+  <span class="e">(>_<) error.nya:2:40  CS0029: No se puede convertir implícitamente el tipo 'string' en 'int'</span>
+  <span class="e">(>_<) error.nya:2:67  CS0103: El nombre 'b' no existe en el contexto actual</span></div>
+<h3>Errores frecuentes</h3>
+<div class="tablewrap"><table>
+<tr><th>Síntoma</th><th>Causa</th><th>Arreglo</th></tr>
+<tr><td>CS1002 «Se esperaba ;»</td><td class="m">Falta el <code>nya</code> al final de la sentencia</td><td class="m">Añade <code>nya</code></td></tr>
+<tr><td>CS0246 «No se encontró el tipo»</td><td class="m">Falta el <code>onegai</code> del namespace, o el nombre está mal escrito</td><td class="m"><code>onegai System.Linq nya</code></td></tr>
+<tr><td>CS5001 «No contiene un método Main»</td><td class="m">El punto de entrada no se llama <code>hajimeru</code> o no es <code>zutto</code></td><td class="m"><code>minna zutto nanimo hajimeru()</code></td></tr>
+<tr><td>El programa no arranca</td><td class="m">No hay <code>dotnet</code> en el PATH</td><td class="m">Instala .NET SDK 8</td></tr>
+</table></div>
+
+<h2 id="como-funciona">Cómo funciona por dentro</h2>
+<p>El compilador tiene tres pasos:</p>
+<div class="cmds">
+  <div class="cmd"><code>1 · tokenizar</code><p>Una expresión regular separa comentarios, cadenas, caracteres, palabras y símbolos. Así las cadenas quedan protegidas.</p></div>
+  <div class="cmd"><code>2 · traducir</code><p>Cada palabra se busca en el diccionario. Si existe, se sustituye; si no, pasa intacta. <code>~</code> se elimina.</p></div>
+  <div class="cmd"><code>3 · dotnet build</code><p>Se genera un <code>.csproj</code> mínimo en <code>.nyabuild/</code> y .NET compila en Release a <code>bin/</code>.</p></div>
+</div>
+<p>Para añadir una palabra nueva, edita el diccionario <code>PALABRAS</code> al principio de <code>~/nyansharp/nyac</code> y, si quieres color en VS Code, añádela también a <code>vscode-ext/syntaxes/nya.tmLanguage.json</code>.</p>
+
+<h2 id="faq">Preguntas frecuentes</h2>
+<dl class="faq">
+  <dt>¿Es realmente compilado?</dt><dd>Sí. El resultado es un ejecutable ELF nativo más su DLL de .NET, igual que cualquier programa C# compilado con <code>dotnet build</code>.</dd>
+  <dt>¿Puedo usar paquetes NuGet?</dt><dd>Sí: <code>nyac add Paquete</code> dentro de un proyecto.</dd><dt>¿Qué licencia tiene?</dt><dd>MIT. Puedes usarlo, modificarlo y distribuirlo libremente, también en proyectos comerciales.</dd>
+  <dt>¿Puedo mezclar palabras C# y NyanSharp?</dt><dd>Sí. <code>int</code>, <code>if</code> o <code>;</code> siguen funcionando porque el compilador solo sustituye lo que está en el diccionario. Pero pierde gracia.</dd>
+  <dt>¿Varios archivos en un proyecto?</dt><dd>Sí: <code>nyac new</code> y todos los <code>.nya</code> de la carpeta se compilan juntos. Ver «Proyectos y NuGet».</dd>
+  <dt>¿Funciona en Windows o Mac?</dt><dd>Sí, con .NET 8 y Python 3 instalados. El ejecutable se genera para el sistema donde compilas.</dd>
+</dl>
+
+<footer>NyanSharp 1.0 · MIT · hecho en Algeciras con demasiado té · <code>nyac diccionario</code> siempre tiene la última palabra.</footer>
+</main>
+</div>
+
+<script>
+const D=[["onegai", "using", "«por favor» — pides prestado un namespace", "estructura"], ["sekai", "System", "«mundo»", "estructura"], ["oshiro", "namespace", "«castillo»", "estructura"], ["nakama", "class", "«compañeros»", "estructura"], ["kokoro", "struct", "«corazón»", "estructura"], ["yakusoku", "interface", "«promesa»", "estructura"], ["erabimono", "enum", "«cosas para elegir»", "estructura"], ["kiroku", "record", "«registro, apunte»", "estructura"], ["hajimeru", "Main", "«empezar»", "estructura"], ["bubun", "partial", "«una parte»", "estructura"], ["tojita", "sealed", "«cerrado»", "estructura"], ["uchi", "internal", "«de casa, de dentro»", "estructura"], ["minna_no", "global", "«de todo el mundo»", "estructura"], ["minna", "public", "«todo el mundo»", "modificador"], ["himitsu", "private", "«secreto»", "modificador"], ["mamoru", "protected", "«proteger»", "modificador"], ["zutto", "static", "«para siempre»", "modificador"], ["kawaranai", "readonly", "«no cambia»", "modificador"], ["taisetsu", "const", "«precioso»", "modificador"], ["yume", "abstract", "«sueño»", "modificador"], ["kakikaeru", "override", "«reescribir»", "modificador"], ["maboroshi", "virtual", "«ilusión»", "modificador"], ["nonbiri", "async", "«sin prisa»", "modificador"], ["matte", "await", "«¡espera!»", "modificador"], ["hitsuyou", "required", "«necesario»", "modificador"], ["hajime", "init", "«al principio»", "modificador"], ["yuragu", "volatile", "«tiembla, cambia»", "modificador"], ["sotogawa", "extern", "«del lado de fuera»", "modificador"], ["abunai", "unsafe", "«¡peligro!»", "modificador"], ["atarashiku", "new", "«de nuevo» (ocultar miembro)", "modificador"], ["nanimo", "void", "«nada»", "tipo"], ["kazu", "int", "«número»", "tipo"], ["nagakazu", "long", "«número largo»", "tipo"], ["chibikazu", "short", "«número chiquitín»", "tipo"], ["puchikazu", "float", "«número pequeñito»", "tipo"], ["dekakazu", "double", "«número grandote»", "tipo"], ["okane", "decimal", "«dinero»", "tipo"], ["kotoba", "string", "«palabra»", "tipo"], ["moji", "char", "«letra»", "tipo"], ["hontou", "bool", "«¿de verdad?»", "tipo"], ["mono", "object", "«cosa»", "tipo"], ["nanika", "var", "«algo»", "tipo"], ["baito", "byte", "byte, tal cual", "tipo"], ["sbaito", "sbyte", "byte con signo", "tipo"], ["ukazu", "uint", "número sin signo", "tipo"], ["unagakazu", "ulong", "largo sin signo", "tipo"], ["uchibikazu", "ushort", "chiquitín sin signo", "tipo"], ["dainamikku", "dynamic", "«dinámico»", "tipo"], ["yubisaki", "nint", "«punta del dedo» (puntero-int)", "tipo"], ["hai", "true", "«sí»", "literal"], ["iie", "false", "«no»", "literal"], ["nai", "null", "«no hay»", "literal"], ["moshi", "if", "«si acaso…»", "control"], ["janakya", "else", "«si no…»", "control"], ["aida", "while", "«mientras»", "control"], ["yaru", "do", "«hacer»", "control"], ["kurikaeshi", "for", "«repetir»", "control"], ["hitotsuzutsu", "foreach", "«uno a uno»", "control"], ["naka", "in", "«dentro de»", "control"], ["erabu", "switch", "«elegir»", "control"], ["baai", "case", "«en el caso de»", "control"], ["futsuu", "default", "«lo normal»", "control"], ["toki", "when", "«cuando»", "control"], ["yamete", "break", "«¡para!»", "control"], ["tsuzukete", "continue", "«¡sigue!»", "control"], ["kaeru", "return", "«volver a casa»", "control"], ["tobu", "goto", "«saltar»", "control"], ["ageteku", "yield", "«ir dando» (yield)", "control"], ["kagi", "lock", "«llave» (lock)", "control"], ["tashikame", "checked", "«comprobado»", "control"], ["tekitou", "unchecked", "«a lo loco» (sin comprobar)", "control"], ["atarashii", "new", "«nuevo»", "objetos"], ["atashi", "this", "«yo» (forma femenina)", "objetos"], ["okaasan", "base", "«mamá» — la clase base", "objetos"], ["desu", "is", "cierre de frase educado", "objetos"], ["toshite", "as", "«como»", "objetos"], ["soto", "out", "«fuera»", "objetos"], ["sasu", "ref", "«señalar»", "objetos"], ["nanikore", "typeof", "«¿qué es esto?»", "objetos"], ["choudai", "get", "«dame»", "objetos"], ["ageru", "set", "«te doy»", "objetos"], ["namae", "nameof", "«nombre»", "objetos"], ["ookisa", "sizeof", "«tamaño»", "objetos"], ["ippai", "params", "«un montón» (params)", "objetos"], ["tomoni", "with", "«junto con» (with)", "objetos"], ["doko", "where", "«dónde» (where)", "objetos"], ["ensou", "operator", "«interpretar» (operator)", "objetos"], ["sotto", "implicit", "«suavemente» (implicit)", "objetos"], ["hakkiri", "explicit", "«claramente» (explicit)", "objetos"], ["yakusokushita", "delegate", "«lo prometido» (delegate)", "objetos"], ["dekigoto", "event", "«suceso» (event)", "objetos"], ["kotei", "fixed", "«fijado»", "objetos"], ["tsumu", "stackalloc", "«apilar»", "objetos"], ["ganbaru", "try", "«¡lo intentaré!»", "errores"], ["daijoubu", "catch", "«no pasa nada»", "errores"], ["owari", "finally", "«fin»", "errores"], ["nageru", "throw", "«lanzar»", "errores"], ["iu", "Console.WriteLine", "«decir»", "e/s"], ["sasayaku", "Console.Write", "«susurrar»", "e/s"], ["kiku", "Console.ReadLine", "«escuchar»", "e/s"], ["nya", ";", "el maullido que cierra cada frase", "puntuación"]];
+const tb=document.querySelector('#dic tbody');
+function render(f){
+  const q=(f||'').toLowerCase();
+  tb.innerHTML=D.filter(r=>!q||r.join(' ').toLowerCase().includes(q))
+    .map(r=>`<tr><td class="n">${r[0]}</td><td class="c">${r[1].replace('<','&lt;')}</td><td class="m">${r[2]}</td><td><span class="cat">${r[3]}</span></td></tr>`).join('')
+    ||'<tr><td colspan="4" class="m">Nada por aquí… (´•︵•`)</td></tr>';
+}
+render('');
+document.getElementById('q').addEventListener('input',e=>render(e.target.value));
+</script>

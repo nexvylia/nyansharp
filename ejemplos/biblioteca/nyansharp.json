@@ -1,0 +1,8 @@
+{
+  "nombre": "biblioteca",
+  "tipo": "exe",
+  "paquetes": {
+    "Newtonsoft.Json": "13.0.3"
+  },
+  "nullable": false
+}

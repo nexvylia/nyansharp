@@ -1,0 +1,70 @@
+// calculadora.nya — una calculadora kawaii uwu~
+onegai sekai nya
+onegai System.Collections.Generic nya
+
+oshiro Calculadora
+{
+    minna nakama Programa
+    {
+        himitsu zutto List<kotoba> historial = atarashii List<kotoba>() nya
+
+        zutto dekakazu Operar(dekakazu a, kotoba op, dekakazu b)
+        {
+            erabu (op)
+            {
+                baai "+": kaeru a + b nya
+                baai "-": kaeru a - b nya
+                baai "*": kaeru a * b nya
+                baai "/":
+                    moshi (b == 0) nageru atarashii DivideByZeroException("¡No se divide por cero, baka!") nya
+                    kaeru a / b nya
+                futsuu: nageru atarashii ArgumentException($"No conozco '{op}' (´•︵•`)") nya
+            }
+        }
+
+        minna zutto nanimo hajimeru()
+        {
+            iu("Calculadora-chan desu~ (◕‿◕✿)") nya
+            iu("Escribe: numero operador numero   (ej: 3 * 4). Vacío para salir.") nya
+
+            aida (hai)
+            {
+                sasayaku("> ") nya
+                kotoba linea = kiku() nya
+                moshi (string.IsNullOrWhiteSpace(linea)) yamete nya
+
+                kotoba[] partes = linea.Split(' ', StringSplitOptions.RemoveEmptyEntries) nya
+                moshi (partes.Length != 3)
+                {
+                    iu("Mou~ tienen que ser tres cosas: numero operador numero") nya
+                    tsuzukete nya
+                }
+
+                ganbaru
+                {
+                    dekakazu a = double.Parse(partes[0]) nya
+                    dekakazu b = double.Parse(partes[2]) nya
+                    dekakazu r = Operar(a, partes[1], b) nya
+                    kotoba texto = $"{a} {partes[1]} {b} = {r}" nya
+                    historial.Add(texto) nya
+                    iu($"Yatta~! {texto}") nya
+                }
+                daijoubu (FormatException)
+                {
+                    iu("Eso no son números, onii-chan...") nya
+                }
+                daijoubu (Exception ex)
+                {
+                    iu($"Gomen~ {ex.Message}") nya
+                }
+            }
+
+            iu($"\nHiciste {historial.Count} operaciones:") nya
+            kurikaeshi (kazu i = 0; i < historial.Count; i++)
+            {
+                iu($"  {i + 1}. {historial[i]}") nya
+            }
+            iu("Sayonara~ (´• ω •`)ﾉ") nya
+        }
+    }
+}

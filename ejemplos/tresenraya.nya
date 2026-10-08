@@ -1,0 +1,145 @@
+// tresenraya.nya — 3 en raya contra la CPU-chan nya~
+onegai sekai nya
+onegai System.Linq nya
+
+oshiro TresEnRaya
+{
+    minna erabimono Ficha { Vacia, X, O }
+
+    minna nakama Tablero
+    {
+        himitsu kawaranai Ficha[] casillas = atarashii Ficha[9] nya
+
+        himitsu zutto kawaranai kazu[][] lineas =
+        {
+            atarashii[] {0,1,2}, atarashii[] {3,4,5}, atarashii[] {6,7,8},
+            atarashii[] {0,3,6}, atarashii[] {1,4,7}, atarashii[] {2,5,8},
+            atarashii[] {0,4,8}, atarashii[] {2,4,6}
+        } nya
+
+        minna Ficha atashi[kazu i]
+        {
+            choudai => casillas[i] nya
+            ageru => casillas[i] = value nya
+        }
+
+        minna hontou Libre(kazu i) => i >= 0 && i < 9 && casillas[i] == Ficha.Vacia nya
+
+        minna hontou Lleno() => casillas.All(c => c != Ficha.Vacia) nya
+
+        minna Ficha Ganador()
+        {
+            hitotsuzutsu (nanika l naka lineas)
+            {
+                Ficha f = casillas[l[0]] nya
+                moshi (f != Ficha.Vacia && f == casillas[l[1]] && f == casillas[l[2]]) kaeru f nya
+            }
+            kaeru Ficha.Vacia nya
+        }
+
+        minna IEnumerable<kazu> Libres() => Enumerable.Range(0, 9).Where(Libre) nya
+
+        himitsu kotoba Dibujo(kazu i) => casillas[i] erabu
+        {
+            Ficha.X => "X",
+            Ficha.O => "O",
+            _ => (i + 1).ToString()
+        } nya
+
+        minna nanimo Pintar()
+        {
+            iu() nya
+            kurikaeshi (kazu fila = 0; fila < 3; fila++)
+            {
+                kazu b = fila * 3 nya
+                iu($"   {Dibujo(b)} │ {Dibujo(b + 1)} │ {Dibujo(b + 2)}") nya
+                moshi (fila < 2) iu("  ───┼───┼───") nya
+            }
+            iu() nya
+        }
+    }
+
+    minna zutto nakama Cpu
+    {
+        himitsu zutto kawaranai Random azar = atarashii Random() nya
+
+        // 1) gana si puede, 2) bloquea si hace falta, 3) centro, 4) esquina, 5) lo que quede
+        minna zutto kazu Elegir(Tablero t, Ficha yo, Ficha rival)
+        {
+            kazu? jugada = Busca(t, yo) ?? Busca(t, rival) nya
+            moshi (jugada != nai) kaeru jugada.Value nya
+            moshi (t.Libre(4)) kaeru 4 nya
+            nanika esquinas = atarashii[] {0, 2, 6, 8}.Where(t.Libre).ToList() nya
+            moshi (esquinas.Count > 0) kaeru esquinas[azar.Next(esquinas.Count)] nya
+            nanika libres = t.Libres().ToList() nya
+            kaeru libres[azar.Next(libres.Count)] nya
+        }
+
+        himitsu zutto kazu? Busca(Tablero t, Ficha f)
+        {
+            hitotsuzutsu (nanika i naka t.Libres())
+            {
+                t[i] = f nya
+                hontou gana = t.Ganador() == f nya
+                t[i] = Ficha.Vacia nya
+                moshi (gana) kaeru i nya
+            }
+            kaeru nai nya
+        }
+    }
+
+    minna nakama Programa
+    {
+        zutto kazu PedirJugada(Tablero t)
+        {
+            aida (hai)
+            {
+                sasayaku("Tu turno, onii-chan (1-9): ") nya
+                kotoba s = kiku() nya
+                moshi (kazu.TryParse(s, soto kazu n) && t.Libre(n - 1)) kaeru n - 1 nya
+                iu("Mou~ esa casilla no vale. Prueba otra uwu") nya
+            }
+        }
+
+        zutto hontou Partida()
+        {
+            nanika t = atarashii Tablero() nya
+            Ficha turno = Ficha.X nya
+            iu("Tú eres X, CPU-chan es O. ¡Ganbatte! (ง •̀ω•́)ง") nya
+            t.Pintar() nya
+
+            aida (hai)
+            {
+                moshi (turno == Ficha.X)
+                {
+                    t[PedirJugada(t)] = Ficha.X nya
+                }
+                janakya
+                {
+                    kazu j = Cpu.Elegir(t, Ficha.O, Ficha.X) nya
+                    t[j] = Ficha.O nya
+                    iu($"CPU-chan pone O en la casilla {j + 1}~") nya
+                }
+                t.Pintar() nya
+
+                Ficha g = t.Ganador() nya
+                moshi (g == Ficha.X) { iu("¡Yatta~! ¡Has ganado! (✿◠‿◠)") nya yamete nya }
+                moshi (g == Ficha.O) { iu("Ehehe~ he ganado yo. Otra vez? (=^･ω･^=)") nya yamete nya }
+                moshi (t.Lleno())    { iu("Empate desu~ (・_・;)") nya yamete nya }
+
+                turno = turno == Ficha.X ? Ficha.O : Ficha.X nya
+            }
+
+            sasayaku("¿Otra partida? (s/n): ") nya
+            kotoba r = kiku() nya
+            kaeru r != nai && r.Trim().ToLower().StartsWith("s") nya
+        }
+
+        minna zutto nanimo hajimeru()
+        {
+            iu("=== 3 en raya kawaii ===") nya
+            aida (Partida()) { }
+            iu("Sayonara~ (´• ω •`)ﾉ") nya
+        }
+    }
+}

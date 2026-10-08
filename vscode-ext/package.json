@@ -1,0 +1,54 @@
+{
+  "name": "nyansharp",
+  "displayName": "NyanSharp (.nya)",
+  "description": "Lenguaje kawaii compilado basado en C#",
+  "version": "1.0.0",
+  "publisher": "nexvylia",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "nyansharp",
+        "aliases": [
+          "NyanSharp",
+          "nya"
+        ],
+        "extensions": [
+          ".nya"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/nya-light.svg",
+          "dark": "./icons/nya-dark.svg"
+        },
+        "filenames": [
+          "nyansharp.json"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nyansharp",
+        "scopeName": "source.nya",
+        "path": "./syntaxes/nya.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "nyansharp",
+        "path": "./snippets.json"
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "nyac"
+      }
+    ]
+  },
+  "icon": "icons/logo.png"
+}

@@ -1,0 +1,146 @@
+// kawaii.nya — clases, bucles, listas y errores en NyanSharp nya~
+onegai sekai nya
+onegai System.Collections.Generic nya
+onegai System.Linq nya
+
+oshiro Kawaii
+{
+    // enum -> erabimono
+    minna erabimono Humor { Feliz, Dormida, Hambrienta }
+
+    // interface -> yakusoku (una promesa uwu)
+    minna yakusoku IMascota
+    {
+        kotoba Nombre { choudai; }
+        nanimo Hablar() nya
+    }
+
+    // clase abstracta -> nakama yume
+    minna yume nakama Animal : IMascota
+    {
+        minna kotoba Nombre { choudai; himitsu ageru; }
+        minna Humor Humor { choudai; ageru; } = Humor.Feliz nya
+
+        mamoru Animal(kotoba nombre) { Nombre = nombre nya }
+
+        minna yume nanimo Hablar() nya
+
+        minna kakikaeru kotoba ToString() => $"{Nombre} ({Humor})" nya
+    }
+
+    minna nakama Gatita : Animal
+    {
+        himitsu kazu vidas = 9 nya
+
+        minna Gatita(kotoba nombre) : okaasan(nombre) { }
+
+        minna kakikaeru nanimo Hablar()
+        {
+            iu($"{Nombre}: nyaa~ (=^･ω･^=)  vidas: {vidas}") nya
+        }
+
+        minna nanimo PerderVida()
+        {
+            moshi (vidas <= 0) nageru atarashii InvalidOperationException("¡Ya no quedan vidas, baka!") nya
+            vidas-- nya
+        }
+    }
+
+    minna nakama Conejita : Animal
+    {
+        minna Conejita(kotoba nombre) : okaasan(nombre) { }
+        minna kakikaeru nanimo Hablar() => iu($"{Nombre}: pyon pyon~ (\\(^ω^)/)") nya
+    }
+
+    minna zutto nakama Programa
+    {
+        // método estático con genéricos y LINQ
+        zutto kazu Sumar(List<kazu> xs) => xs.Sum() nya
+
+        zutto hontou EsPar(kazu n) => n % 2 == 0 nya
+
+        minna zutto nanimo hajimeru()
+        {
+            iu("=== NyanSharp demo kawaii ===") nya
+
+            // var -> nanika, new -> atarashii
+            nanika mascotas = atarashii List<Animal>
+            {
+                atarashii Gatita("Neko-chan"),
+                atarashii Conejita("Usagi-chan"),
+                atarashii Gatita("Mimi"),
+            } nya
+
+            // foreach -> hitotsuzutsu ... naka
+            hitotsuzutsu (nanika m naka mascotas)
+            {
+                m.Hablar() nya
+            }
+
+            // for -> kurikaeshi, if/else -> moshi/janakya
+            kurikaeshi (kazu i = 1; i <= 5; i++)
+            {
+                moshi (EsPar(i))
+                    iu($"  {i} es par desu~") nya
+                janakya moshi (i == 5)
+                    iu($"  {i} es el último nya!") nya
+                janakya
+                    iu($"  {i} es impar uwu") nya
+            }
+
+            // while -> aida, break -> yamete
+            kazu contador = 0 nya
+            aida (hai)
+            {
+                contador++ nya
+                moshi (contador >= 3) yamete nya
+            }
+            iu($"contador terminó en {contador}") nya
+
+            // switch -> erabu / baai / futsuu
+            nanika gatita = mascotas.OfType<Gatita>().First() nya
+            gatita.Humor = Humor.Hambrienta nya
+            erabu (gatita.Humor)
+            {
+                baai Humor.Feliz:      iu("está feliz~") nya      yamete nya
+                baai Humor.Dormida:    iu("zzz... shh") nya       yamete nya
+                baai Humor.Hambrienta: iu("¡quiere onigiri!") nya yamete nya
+                futsuu:                iu("???") nya              yamete nya
+            }
+
+            // is -> desu, as -> toshite
+            hitotsuzutsu (nanika m naka mascotas)
+            {
+                moshi (m desu Conejita c) iu($"{c.Nombre} es una conejita (pattern matching)") nya
+                nanika g = m toshite Gatita nya
+                moshi (g != nai) iu($"{g.Nombre} es una gatita") nya
+            }
+
+            // try/catch/finally -> ganbaru / daijoubu / owari
+            ganbaru
+            {
+                kurikaeshi (kazu i = 0; i < 20; i++) gatita.PerderVida() nya
+            }
+            daijoubu (InvalidOperationException ex)
+            {
+                iu($"daijoubu~ capturado: {ex.Message}") nya
+            }
+            owari
+            {
+                iu("owari desu (fin del bloque)") nya
+            }
+
+            // LINQ + lambdas
+            nanika nums = Enumerable.Range(1, 10).ToList() nya
+            nanika pares = nums.Where(EsPar).ToList() nya
+            iu($"pares: {string.Join(", ", pares)}  suma: {Sumar(pares)}") nya
+
+            // tuplas, out -> soto
+            moshi (kazu.TryParse("42", soto nanika v)) iu($"parseado: {v}") nya
+            (kotoba a, kazu b) = ("respuesta", 42) nya
+            iu($"{a} = {b}") nya
+
+            iu("Sayonara~ (´• ω •`)ﾉ") nya
+        }
+    }
+}

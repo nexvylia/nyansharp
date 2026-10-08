@@ -1,0 +1,12 @@
+{
+  "Programa": { "prefix": "programa", "body": [
+    "onegai sekai nya", "", "oshiro ${1:MiApp}", "{",
+    "    minna nakama Programa", "    {",
+    "        minna zutto nanimo hajimeru(kotoba[] args)", "        {",
+    "            iu(\"${2:Konnichiwa~!}\") nya", "        }", "    }", "}" ] },
+  "Clase": { "prefix": "nakama", "body": ["minna nakama ${1:Nombre}", "{", "    $0", "}"] },
+  "If": { "prefix": "moshi", "body": ["moshi (${1:cond})", "{", "    $0", "}"] },
+  "For": { "prefix": "kurikaeshi", "body": ["kurikaeshi (kazu ${1:i} = 0; $1 < ${2:n}; $1++)", "{", "    $0", "}"] },
+  "Foreach": { "prefix": "hitotsuzutsu", "body": ["hitotsuzutsu (nanika ${1:x} naka ${2:lista})", "{", "    $0", "}"] },
+  "Try": { "prefix": "ganbaru", "body": ["ganbaru", "{", "    $0", "}", "daijoubu (Exception ex)", "{", "    iu(ex.Message) nya", "}"] }
+}
