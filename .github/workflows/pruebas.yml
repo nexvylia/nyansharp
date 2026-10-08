@@ -9,10 +9,10 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12" }
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5
         with: { dotnet-version: "8.0.x" }
 
       - name: Copiar el repo a una carpeta con espacios y paréntesis
@@ -48,17 +48,23 @@ jobs:
       - name: Ejemplos desde PowerShell (terminal nueva)
         shell: pwsh
         run: |
+          trap { Write-Host "::error title=excepcion::$($_ | Out-String)"; exit 1 }
           [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
           $env:Path = (Get-Item 'HKCU:\Environment').GetValue('Path') + ';' + $env:Path
           Set-Location $env:NYA_DIR
           $fallos = 0
+          function Mal($nombre, $out) {
+            $t = ("$out" -replace '%','%25' -replace "`r",'' -replace "`n",'%0A')
+            Write-Host "::error title=$nombre::$t"
+            $script:fallos++
+          }
           function Prueba($nombre, $entrada, $esperado, [string[]]$extra = @()) {
             $out = ($entrada | nyac run @extra 2>&1) -join "`n"
             if ($out.Contains($esperado)) { Write-Host "OK  $nombre" }
-            else { Write-Host "MAL $nombre`n$out"; $script:fallos++ }
+            else { Mal $nombre $out }
           }
           $v = (nyac version 2>&1) -join ''   # nyac tiene que estar en el PATH
-          if ($v -like '*nyac 1.0.0*') { Write-Host "OK  nyac en el PATH" } else { Write-Host "MAL nyac version: $v"; $fallos++ }
+          if ($v -like '*nyac 1.0.0*') { Write-Host "OK  nyac en el PATH" } else { Mal 'nyac version' $v }
           Prueba 'hola'        "Matias"                'Encantada, Matias-kun' @('ejemplos\hola.nya')
           Prueba 'kawaii'      ''                      'pares: 2, 4, 6, 8, 10  suma: 30' @('ejemplos\kawaii.nya')
           Prueba 'calculadora' "3 * 4`n10 / 0`n"       'No se divide por cero' @('ejemplos\calculadora.nya')
@@ -70,12 +76,12 @@ jobs:
           nyac new miapp | Out-Host
           Set-Location miapp
           $out = (nyac run 2>&1) -join "`n"
-          if ($out.Contains('Konnichiwa desde miapp')) { Write-Host "OK  nyac new" } else { Write-Host "MAL nyac new`n$out"; $fallos++ }
+          if ($out.Contains('Konnichiwa desde miapp')) { Write-Host "OK  nyac new" } else { Mal 'nyac new' $out }
 
           # los errores apuntan al .nya correcto
           Set-Content main.nya "onegai sekai nya`nnakama A { minna zutto nanimo hajimeru() { kazu x = `"t`" nya } }"
           $out = (nyac build 2>&1) -join "`n"
-          if ($out -match 'main\.nya:2:.*CS0029') { Write-Host "OK  mapa de errores" } else { Write-Host "MAL mapa de errores`n$out"; $fallos++ }
+          if ($out -match 'main\.nya:2:.*CS0029') { Write-Host "OK  mapa de errores" } else { Mal 'mapa de errores' $out }
 
           if ($fallos) { throw "$fallos pruebas fallan" }
 
@@ -96,7 +102,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
         with: { dotnet-version: "8.0.x" }
       - run: ./pruebas.sh

@@ -1,5 +1,7 @@
 # NyanSharp (.nya) · v1.0
 
+[![pruebas](https://github.com/nexvylia/nyansharp/actions/workflows/pruebas.yml/badge.svg)](https://github.com/nexvylia/nyansharp/actions/workflows/pruebas.yml)
+
 Un lenguaje de programación de broma pero que funciona de verdad: es C# 12 con
 palabras kawaii de anime. El compilador `nyac` traduce el código `.nya` a C# y
 lo compila con .NET 8. Todo lo de C# sigue valiendo: genéricos, LINQ, async,
@@ -21,134 +23,198 @@ nakama Programa
 
 ## Índice
 
-1. [Requisitos](#1-requisitos)
-2. [Descargar NyanSharp](#2-descargar-nyansharp)
-3. [Instalar el compilador `nyac`](#3-instalar-el-compilador-nyac) (Linux · macOS · Windows)
+1. [Qué necesitas](#1-qué-necesitas)
+2. [Instalar en Windows (paso a paso)](#2-instalar-en-windows-paso-a-paso)
+3. [Instalar en Linux y macOS](#3-instalar-en-linux-y-macos)
 4. [Instalar la extensión de VS Code](#4-instalar-la-extensión-de-vs-code)
 5. [Otros editores](#5-otros-editores) (VSCodium, Cursor, Windsurf, otros)
 6. [Tu primer programa](#6-tu-primer-programa)
 7. [Compilar desde VS Code con Ctrl+Shift+B](#7-compilar-desde-vs-code-con-ctrlshiftb)
 8. [Comandos de `nyac`](#8-comandos-de-nyac)
 9. [Problemas frecuentes](#9-problemas-frecuentes)
-10. [Desinstalar](#10-desinstalar)
+10. [Actualizar y desinstalar](#10-actualizar-y-desinstalar)
 
 ---
 
-## 1. Requisitos
+## 1. Qué necesitas
 
-| Programa | Para qué | Descarga |
-|---|---|---|
-| **Python 3.8+** | Ejecuta el compilador `nyac` (no necesita librerías extra) | <https://www.python.org/downloads/> |
-| **.NET SDK 8** | Compila el C# que genera `nyac`. Tiene que ser el **SDK**, no solo el Runtime | <https://dotnet.microsoft.com/download/dotnet/8.0> |
-| **VS Code** (opcional) | Resaltado de colores, icono y snippets para `.nya` | <https://code.visualstudio.com/> |
+| Programa | Para qué |
+|---|---|
+| **Git** | Clonar (descargar) este repositorio |
+| **Python 3.8 o más nuevo** | Ejecuta el compilador `nyac` (no necesita librerías extra) |
+| **.NET SDK 8** | Compila el C# que genera `nyac`. Tiene que ser el **SDK 8**, no el «Runtime» |
+| **VS Code** (recomendado) | Colores, icono y snippets para los archivos `.nya` |
 
-Comprueba que los tienes abriendo una terminal:
+NyanSharp **no se descarga como programa aparte**: se clona el repositorio y se
+instala desde esa carpeta. La carpeta clonada **es** la instalación, así que no
+la borres ni la muevas después.
 
-```bash
-python3 --version    # en Windows: python --version
-dotnet --list-sdks   # debe salir una línea que empiece por 8.
-code --version       # solo si vas a usar VS Code
+---
+
+## 2. Instalar en Windows (paso a paso)
+
+Funciona en Windows 10 y 11, desde PowerShell, CMD o el terminal de VS Code.
+
+### Paso 1. Instalar los programas necesarios
+
+Abre **PowerShell** (tecla Windows → escribe `PowerShell` → Enter) y pega:
+
+```powershell
+winget install --id Git.Git -e
+winget install --id Python.Python.3.12 -e
+winget install --id Microsoft.DotNet.SDK.8 -e
+winget install --id Microsoft.VisualStudioCode -e
 ```
 
+Acepta lo que te pregunte (`Y` + Enter). Si ya tienes alguno, winget lo dirá y
+pasará al siguiente.
+
 <details>
-<summary>Instalar los requisitos desde la terminal</summary>
+<summary>¿No tienes <code>winget</code>? Instálalos a mano</summary>
+
+- Git: <https://git-scm.com/download/win> (siguiente, siguiente… con las opciones por defecto).
+- Python: <https://www.python.org/downloads/> → en la primera pantalla marca
+  **«Add python.exe to PATH»** antes de pulsar Install.
+- .NET SDK 8: <https://dotnet.microsoft.com/download/dotnet/8.0> → columna
+  **SDK**, «Windows x64 Installer» (no el Runtime).
+- VS Code: <https://code.visualstudio.com/> → deja marcada **«Agregar a PATH»**.
+
+</details>
+
+### Paso 2. Cerrar y abrir PowerShell
+
+**Cierra PowerShell y ábrelo otra vez.** Si no, no encontrará los programas que
+acabas de instalar. Comprueba que todo responde:
+
+```powershell
+git --version
+py --version
+dotnet --list-sdks
+code --version
+```
+
+`dotnet --list-sdks` tiene que mostrar una línea que empiece por `8.`.
+Si alguno dice «no se reconoce como nombre de un cmdlet», mira
+[Problemas frecuentes](#9-problemas-frecuentes).
+
+### Paso 3. Clonar el repositorio
+
+Esto lo descarga en tu carpeta de usuario (`C:\Users\TuNombre\nyansharp`):
+
+```powershell
+cd $HOME
+git clone https://github.com/nexvylia/nyansharp.git
+cd nyansharp
+```
+
+### Paso 4. Ejecutar el instalador
+
+Desde esa misma ventana:
+
+```powershell
+.\instalar.bat
+```
+
+(o doble clic en `instalar.bat` desde el Explorador de archivos, dentro de la
+carpeta `nyansharp`).
+
+El instalador:
+
+1. Comprueba que tienes Python 3 y el .NET SDK 8 (si falta algo, te dice el comando exacto para instalarlo y no toca nada).
+2. Añade la carpeta `nyansharp` al **PATH de tu usuario**, para que el comando `nyac` funcione en cualquier terminal. No necesita permisos de administrador.
+3. Instala la extensión en VS Code (y también en VSCodium, Cursor o Windsurf si los tienes).
+4. Abre la documentación en el navegador.
+
+Al final debe salir `Listo desu~`.
+
+### Paso 5. Cerrar todo y probar
+
+**Cierra todas las ventanas de PowerShell/CMD y VS Code** (las que estaban
+abiertas no ven el PATH nuevo). Abre PowerShell otra vez y prueba:
+
+```powershell
+cd $HOME\nyansharp
+nyac run ejemplos\hola.nya
+```
+
+Te preguntará tu nombre y te saludará. La primera vez tarda unos segundos
+porque .NET prepara el proyecto.
+
+### Paso 6. Abrirlo en VS Code
+
+```powershell
+code $HOME\nyansharp
+```
+
+Abre `ejemplos\kawaii.nya`: las palabras deben verse de colores y abajo a la
+derecha debe poner **NyanSharp**. Pulsa `Ctrl+Shift+B` para compilar.
+
+> **Sin git (ZIP):** en esta página, **Code → Download ZIP**. Haz clic derecho en
+> el ZIP → **Extraer todo…** → elige una carpeta fija (por ejemplo
+> `C:\Users\TuNombre\nyansharp`). Ejecuta `instalar.bat` **desde la carpeta
+> extraída**, nunca desde dentro del ZIP. Si Windows muestra «Windows protegió su
+> PC», pulsa **Más información → Ejecutar de todas formas**. Con el ZIP no
+> podrás actualizar con `git pull`.
+
+---
+
+## 3. Instalar en Linux y macOS
+
+### Paso 1. Programas necesarios
 
 **Ubuntu / Debian**
 
 ```bash
-sudo apt install python3 dotnet-sdk-8.0
+sudo apt install git python3 dotnet-sdk-8.0
 ```
 
 **Fedora**
 
 ```bash
-sudo dnf install python3 dotnet-sdk-8.0
+sudo dnf install git python3 dotnet-sdk-8.0
 ```
 
 **Arch**
 
 ```bash
-sudo pacman -S python dotnet-sdk-8.0
+sudo pacman -S git python dotnet-sdk-8.0
 ```
 
 **macOS** (con [Homebrew](https://brew.sh/))
 
 ```bash
-brew install python dotnet@8
+brew install git python dotnet@8
 ```
 
-**Windows** (con winget, desde PowerShell)
+VS Code: <https://code.visualstudio.com/>. En macOS, después de instalarlo abre
+VS Code, `Cmd+Shift+P` → «Shell Command: Install 'code' command in PATH».
 
-```powershell
-winget install Python.Python.3.12 Microsoft.DotNet.SDK.8 Microsoft.VisualStudioCode
-```
-
-</details>
-
----
-
-## 2. Descargar NyanSharp
-
-Con git:
+### Paso 2. Clonar e instalar
 
 ```bash
+cd ~
 git clone https://github.com/nexvylia/nyansharp.git
 cd nyansharp
-```
-
-Sin git: en esta página pulsa **Code → Download ZIP** y descomprímelo donde quieras.
-
----
-
-## 3. Instalar el compilador `nyac`
-
-### Linux y macOS
-
-Desde la carpeta `nyansharp`:
-
-```bash
 chmod +x nyac
 mkdir -p ~/.local/bin
 ln -sf "$PWD/nyac" ~/.local/bin/nyac
+code --install-extension nyansharp-1.0.0.vsix
 ```
 
-Si `~/.local/bin` no está en tu PATH, añádelo (una sola vez):
+Si `~/.local/bin` no está en tu PATH (al escribir `nyac` dice «command not
+found»), añádelo una sola vez:
 
 ```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # o ~/.zshrc en macOS/zsh
-source ~/.bashrc
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc   # en macOS: ~/.zshrc
+source ~/.bashrc                                            # en macOS: source ~/.zshrc
 ```
 
-Prueba:
+### Paso 3. Probar
 
 ```bash
 nyac run ejemplos/hola.nya
+code ~/nyansharp
 ```
-
-> El enlace apunta a la carpeta que has clonado: no la borres ni la muevas. Para
-> actualizar basta con `git pull` dentro de ella.
-
-### Windows
-
-**Opción fácil:** doble clic en `instalar.bat`. El instalador:
-
-1. Comprueba que tienes Python, .NET SDK 8 y VS Code.
-2. Copia NyanSharp a `%LOCALAPPDATA%\NyanSharp`.
-3. Lo añade al PATH de tu usuario.
-4. Instala la extensión de VS Code (si encuentra el comando `code`).
-5. Abre la documentación.
-
-Después **cierra y vuelve a abrir la terminal** y prueba:
-
-```bat
-nyac run ejemplos\hola.nya
-```
-
-**Opción manual:** añade la carpeta `nyansharp` al PATH (Inicio → «Editar las
-variables de entorno de tu cuenta» → `Path` → Nuevo). El archivo `nyac.cmd` hace
-que el comando `nyac` funcione en CMD y PowerShell.
-
-> Al instalar Python en Windows, marca la casilla **«Add python.exe to PATH»**.
 
 ---
 
@@ -156,6 +222,9 @@ que el comando `nyac` funcione en CMD y PowerShell.
 
 La extensión da: colores para las 101 palabras kawaii, icono propio para los
 archivos `.nya`, cierre automático de llaves y comillas, y snippets.
+
+En Windows, `instalar.bat` ya la instala. Usa esta sección si no lo hizo
+(por ejemplo, porque VS Code no estaba instalado todavía) o si estás en Linux/macOS.
 
 ### Opción A: desde la terminal
 
@@ -301,24 +370,59 @@ La referencia completa con las 101 palabras está en [`docs.html`](docs.html)
 
 ## 9. Problemas frecuentes
 
+### Windows
+
 | Mensaje / síntoma | Solución |
 |---|---|
-| `nyac: command not found` / «no se reconoce como comando» | El PATH no está bien. Repite el paso 3 y **abre una terminal nueva**. |
-| `dotnet: command not found` | Falta el .NET SDK 8 (paso 1). |
-| `No .NET SDKs were found` o error de versión | Tienes el Runtime pero no el **SDK**. Instala el SDK 8. |
-| `python3: not found` (Windows) | En Windows el comando es `python`. Reinstala Python marcando «Add to PATH». |
-| `Permission denied` al ejecutar `nyac` | `chmod +x nyac` dentro de la carpeta. |
-| Los `.nya` salen sin colores en VS Code | La extensión no está instalada: paso 4. Abajo a la derecha elige el lenguaje **NyanSharp**. |
-| Ctrl+Shift+B no hace nada | Abre la **carpeta** del proyecto (Archivo → Abrir carpeta), no un archivo suelto, y copia `.vscode/`. |
+| `nyac : El término 'nyac' no se reconoce…` | No has cerrado y abierto la terminal después de `instalar.bat` (paso 5). Si sigue igual, ejecuta otra vez `instalar.bat` desde la carpeta `nyansharp`. En VS Code, ciérralo **entero** y ábrelo de nuevo. |
+| `winget : El término 'winget' no se reconoce…` | Instala «Instalador de aplicación» desde Microsoft Store, o instala los programas a mano (paso 1, desplegable). |
+| `git`, `py`, `dotnet` o `code` «no se reconoce» justo después de instalarlos | Cierra PowerShell y ábrelo otra vez (paso 2). |
+| `python` abre Microsoft Store o no hace nada | Es el acceso directo falso de Windows. Instala Python con winget (paso 1). `nyac` usa el lanzador `py`, que no tiene este problema. |
+| El instalador dice «Falta el .NET SDK 8» pero tienes .NET | Tienes el Runtime u otra versión (9, 10…). Instala también el SDK 8: `winget install --id Microsoft.DotNet.SDK.8 -e`. Pueden convivir. |
+| «Estas ejecutando el instalador desde dentro de un ZIP» | Extrae el ZIP (clic derecho → Extraer todo…) y ejecuta `instalar.bat` desde la carpeta extraída. |
+| `.\instalar.bat` no se reconoce | No estás dentro de la carpeta: `cd $HOME\nyansharp` y repite. |
+| «Windows protegió su PC» | Solo pasa con el ZIP descargado: **Más información → Ejecutar de todas formas**. |
+| La extensión no se instaló | VS Code no estaba instalado o no estaba en el PATH al ejecutar `instalar.bat`. Instálala a mano (sección 4, opción B) o vuelve a ejecutar `instalar.bat`. |
+| Los emoticonos salen como `?` | Usa **Windows Terminal** o el terminal de VS Code; la consola antigua (conhost) no tiene esos símbolos en su fuente. |
+
+### Linux y macOS
+
+| Mensaje / síntoma | Solución |
+|---|---|
+| `nyac: command not found` | Falta `~/.local/bin` en el PATH (sección 3, paso 2) o no has abierto una terminal nueva. |
+| `Permission denied` al ejecutar `nyac` | `chmod +x ~/nyansharp/nyac` |
+| `dotnet: command not found` / `No .NET SDKs were found` | Falta el .NET SDK 8 (sección 3, paso 1). |
+
+### En todos
+
+| Mensaje / síntoma | Solución |
+|---|---|
+| Los `.nya` salen sin colores en VS Code | La extensión no está instalada (sección 4). Abajo a la derecha elige el lenguaje **NyanSharp**. |
+| Ctrl+Shift+B no hace nada | Abre la **carpeta** (Archivo → Abrir carpeta), no un archivo suelto, y copia `.vscode/` a tu proyecto. |
 | Un nombre tuyo se convierte en otra cosa | Choca con una palabra kawaii: usa `@nombre` o comprueba con `nyac check`. |
 
 ---
 
-## 10. Desinstalar
+## 10. Actualizar y desinstalar
 
-- **Extensión:** `code --uninstall-extension nexvylia.nyansharp` (o desde el panel de Extensiones).
-- **Linux/macOS:** `rm ~/.local/bin/nyac` y borra la carpeta clonada.
-- **Windows:** borra `%LOCALAPPDATA%\NyanSharp` y quítala del `Path` de tu usuario.
+**Actualizar** (si lo instalaste con git):
+
+```bash
+cd ~/nyansharp        # Windows: cd $HOME\nyansharp
+git pull
+code --install-extension nyansharp-1.0.0.vsix --force
+```
+
+**Desinstalar en Windows:** doble clic en `desinstalar.bat` (quita `nyac` del
+PATH y la extensión de VS Code). Después borra la carpeta `nyansharp`.
+
+**Desinstalar en Linux/macOS:**
+
+```bash
+rm ~/.local/bin/nyac
+code --uninstall-extension nexvylia.nyansharp
+rm -rf ~/nyansharp
+```
 
 ---
 
@@ -327,19 +431,20 @@ La referencia completa con las 101 palabras está en [`docs.html`](docs.html)
 | Ruta | Qué es |
 |---|---|
 | `nyac` / `nyac.py` | Compilador (el mismo script; `nyac` para Linux/Mac) |
-| `nyac.cmd` | Lanzador para Windows |
+| `nyac.cmd` | Lanzador para Windows (usa `py` o `python`) |
+| `instalar.bat`, `desinstalar.bat` | Instalación en Windows |
 | `vscode-ext/` | Código fuente de la extensión de VS Code |
 | `nyansharp-1.0.0.vsix` | Extensión empaquetada, lista para instalar |
 | `ejemplos/` | hola, kawaii, calculadora, tresenraya y biblioteca (con NuGet) |
 | `docs.html` | Documentación completa |
-| `instalar.bat`, `LEEME-WINDOWS.txt` | Instalación en Windows |
-| `pruebas.sh` | Suite de pruebas (9 casos, ~3 min, necesita .NET 8) |
+| `pruebas.sh` | Suite de pruebas para Linux/macOS (9 casos, necesita .NET 8) |
+| `.github/workflows/pruebas.yml` | Pruebas automáticas en Windows y Linux en cada cambio |
 
 ## Estado
 
-Versión 1.0 (septiembre 2026). Probado en Linux. El instalador de Windows está
-hecho pero aún no se ha probado en un Windows real: si lo pruebas, abre un issue
-contando cómo fue.
+Versión 1.0 (septiembre 2026). Cada cambio se prueba automáticamente en Windows
+(instalación con `instalar.bat`, en PowerShell y CMD) y en Linux. Si algo no te
+funciona, abre un issue con el mensaje de error.
 
 ## Licencia
 

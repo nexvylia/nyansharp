@@ -129,15 +129,25 @@ footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--line);color
 <div class="callout"><b>Idea clave.</b> Solo cambian las palabras clave y el punto y coma. Los nombres de tipos del framework (<code>List</code>, <code>Console</code>, <code>Exception</code>…), los operadores y la sintaxis siguen siendo los de C#.</div>
 
 <h2 id="instalar">Instalación</h2>
-<p>Necesitas <strong>.NET SDK 8</strong> y <strong>Python 3</strong>. En este equipo ya está todo colocado:</p>
-<div class="cmds">
-  <div class="cmd"><code>~/nyansharp/nyac</code><p>El compilador. Un solo archivo Python.</p></div>
-  <div class="cmd"><code>~/bin/nyac</code><p>Enlace en el PATH. Escribe <code>nyac</code> desde cualquier carpeta.</p></div>
-  <div class="cmd"><code>~/.vscode/extensions/nexvylia.nyansharp-0.1.0</code><p>Extensión de VS Code: colores y snippets.</p></div>
-</div>
-<p>Para llevarlo a otra máquina: copia la carpeta <code>~/nyansharp</code>, instala .NET 8 y crea el enlace:</p>
-<pre><code>ln -s ~/nyansharp/nyac ~/bin/nyac
-cp -r ~/nyansharp/vscode-ext ~/.vscode/extensions/nexvylia.nyansharp-0.1.0</code></pre>
+<p>Necesitas <strong>Git</strong>, <strong>Python 3</strong> y el <strong>.NET SDK 8</strong>. NyanSharp se instala clonando el repositorio: la carpeta clonada es la instalación, no la borres ni la muevas.</p>
+<h3>Windows</h3>
+<pre><code>winget install --id Git.Git -e
+winget install --id Python.Python.3.12 -e
+winget install --id Microsoft.DotNet.SDK.8 -e
+winget install --id Microsoft.VisualStudioCode -e</code></pre>
+<p>Cierra PowerShell, ábrelo de nuevo y ejecuta:</p>
+<pre><code>cd $HOME
+git clone https://github.com/nexvylia/nyansharp.git
+cd nyansharp
+.\instalar.bat</code></pre>
+<p><code>instalar.bat</code> comprueba Python y .NET, añade la carpeta al PATH de tu usuario e instala la extensión de VS Code. Después <strong>cierra todas las terminales y VS Code</strong>, ábrelos otra vez y prueba <code>nyac run ejemplos\hola.nya</code>.</p>
+<h3>Linux y macOS</h3>
+<pre><code>git clone https://github.com/nexvylia/nyansharp.git ~/nyansharp
+cd ~/nyansharp
+chmod +x nyac
+mkdir -p ~/.local/bin &amp;&amp; ln -sf "$PWD/nyac" ~/.local/bin/nyac
+code --install-extension nyansharp-1.0.0.vsix</code></pre>
+<div class="callout"><b>Extensión de VS Code.</b> Hay que instalar el archivo <code>nyansharp-1.0.0.vsix</code> (o desde VS Code: Extensiones → «…» → Install from VSIX). Copiar la carpeta <code>vscode-ext</code> a mano no funciona. La guía completa, con problemas frecuentes, está en el README del repositorio.</div>
 
 <h2 id="compilar">Compilar y ejecutar</h2>
 <div class="cmds">
