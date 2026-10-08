@@ -17,3 +17,4 @@ for %%E in (code codium cursor windsurf) do (
 )
 echo   Hecho. Ya puedes borrar la carpeta del repositorio.
 if /i not "%~1"=="/silencioso" pause
+exit /b 0
