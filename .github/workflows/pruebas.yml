@@ -1,0 +1,102 @@
+name: pruebas
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0.x" }
+
+      - name: Copiar el repo a una carpeta con espacios y paréntesis
+        shell: pwsh
+        run: |
+          $dest = "$env:USERPROFILE\Mis cosas (2)\nyansharp"
+          New-Item -ItemType Directory -Force (Split-Path $dest) | Out-Null
+          Copy-Item -Recurse $env:GITHUB_WORKSPACE $dest
+          "NYA_DIR=$dest" | Out-File -Append $env:GITHUB_ENV
+
+      - name: Los .bat tienen finales de línea CRLF
+        shell: pwsh
+        run: |
+          foreach ($f in 'instalar.bat','desinstalar.bat','nyac.cmd') {
+            $b = [IO.File]::ReadAllBytes("$env:NYA_DIR\$f")
+            if (-not ([Text.Encoding]::ASCII.GetString($b) -match "`r`n")) { throw "$f no tiene CRLF" }
+          }
+
+      - name: instalar.bat
+        shell: cmd
+        run: call "%NYA_DIR%\instalar.bat" /silencioso
+
+      - name: El PATH del usuario contiene la carpeta
+        shell: pwsh
+        run: |
+          $p = (Get-Item 'HKCU:\Environment').GetValue('Path')
+          if (-not (($p -split ';') -contains $env:NYA_DIR)) { throw "PATH sin NyanSharp: $p" }
+          # instalar dos veces no duplica la entrada
+          cmd /c "call `"$env:NYA_DIR\instalar.bat`" /silencioso" | Out-Null
+          $p = (Get-Item 'HKCU:\Environment').GetValue('Path')
+          if ((($p -split ';') | Where-Object { $_ -eq $env:NYA_DIR }).Count -ne 1) { throw "entrada duplicada: $p" }
+
+      - name: Ejemplos desde PowerShell (terminal nueva)
+        shell: pwsh
+        run: |
+          [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+          $env:Path = (Get-Item 'HKCU:\Environment').GetValue('Path') + ';' + $env:Path
+          Set-Location $env:NYA_DIR
+          $fallos = 0
+          function Prueba($nombre, $entrada, $esperado, [string[]]$extra = @()) {
+            $out = ($entrada | nyac run @extra 2>&1) -join "`n"
+            if ($out.Contains($esperado)) { Write-Host "OK  $nombre" }
+            else { Write-Host "MAL $nombre`n$out"; $script:fallos++ }
+          }
+          $v = (nyac version 2>&1) -join ''   # nyac tiene que estar en el PATH
+          if ($v -like '*nyac 1.0.0*') { Write-Host "OK  nyac en el PATH" } else { Write-Host "MAL nyac version: $v"; $fallos++ }
+          Prueba 'hola'        "Matias"                'Encantada, Matias-kun' @('ejemplos\hola.nya')
+          Prueba 'kawaii'      ''                      'pares: 2, 4, 6, 8, 10  suma: 30' @('ejemplos\kawaii.nya')
+          Prueba 'calculadora' "3 * 4`n10 / 0`n"       'No se divide por cero' @('ejemplos\calculadora.nya')
+          Prueba 'tresenraya'  "5`n1`n3`n7`nn"         'he ganado yo'          @('ejemplos\tresenraya.nya')
+          Prueba 'biblioteca'  ''                      'args recibidos: 2'     @('ejemplos\biblioteca','a','b')
+
+          # nyac new + run en otra unidad/carpeta
+          Set-Location $env:RUNNER_TEMP
+          nyac new miapp | Out-Host
+          Set-Location miapp
+          $out = (nyac run 2>&1) -join "`n"
+          if ($out.Contains('Konnichiwa desde miapp')) { Write-Host "OK  nyac new" } else { Write-Host "MAL nyac new`n$out"; $fallos++ }
+
+          # los errores apuntan al .nya correcto
+          Set-Content main.nya "onegai sekai nya`nnakama A { minna zutto nanimo hajimeru() { kazu x = `"t`" nya } }"
+          $out = (nyac build 2>&1) -join "`n"
+          if ($out -match 'main\.nya:2:.*CS0029') { Write-Host "OK  mapa de errores" } else { Write-Host "MAL mapa de errores`n$out"; $fallos++ }
+
+          if ($fallos) { throw "$fallos pruebas fallan" }
+
+      - name: nyac desde CMD
+        shell: cmd
+        run: |
+          for /f "tokens=2*" %%A in ('reg query HKCU\Environment /v Path') do set "PATH=%%B;%PATH%"
+          cd /d "%NYA_DIR%"
+          call nyac run ejemplos\kawaii.nya | findstr /c:"suma: 30" || exit /b 1
+
+      - name: desinstalar.bat
+        shell: pwsh
+        run: |
+          cmd /c "call `"$env:NYA_DIR\desinstalar.bat`" /silencioso"
+          $p = (Get-Item 'HKCU:\Environment').GetValue('Path')
+          if (($p -split ';') -contains $env:NYA_DIR) { throw "sigue en el PATH" }
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0.x" }
+      - run: ./pruebas.sh

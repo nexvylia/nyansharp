@@ -1,0 +1,9 @@
+# Los .bat/.cmd necesitan finales de linea de Windows (CRLF) o cmd falla.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+# Los scripts de Linux/Mac necesitan LF.
+nyac text eol=lf
+*.py  text eol=lf
+*.sh  text eol=lf
+*.vsix binary
+*.png  binary

@@ -15,6 +15,24 @@ Uso:
 """
 import json, os, re, subprocess, sys
 
+# Windows: si la salida va a un pipe (tareas, CI), no reventar con los emoticonos.
+for _s in (sys.stdout, sys.stderr):
+    try:
+        if not _s.isatty():
+            _s.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
+# Salida de dotnet: en Windows usa la página de códigos de la consola.
+SALIDA_DOTNET = "oem" if os.name == "nt" else "utf-8"
+
+def ruta_corta(ruta):
+    """relpath que no falla en Windows si la ruta está en otra unidad (C: vs D:)."""
+    try:
+        return os.path.relpath(ruta)
+    except ValueError:
+        return ruta
+
 VERSION = "1.0.0"
 
 # ---------- diccionario kawaii -> C# ----------
@@ -140,6 +158,22 @@ def mostrar_errores(texto: str, mapa_nombres):
 # ---------- proyecto ----------
 CONFIG = "nyansharp.json"
 
+# Se añade a los ejecutables: consola en UTF-8 para que los emoticonos y las
+# tildes salgan bien también en Windows (por defecto usa la página 850/437).
+INICIO_CS = """#pragma warning disable
+namespace NyanSharpInterno
+{
+    internal static class Inicio
+    {
+        [System.Runtime.CompilerServices.ModuleInitializer]
+        internal static void Iniciar()
+        {
+            try { System.Console.OutputEncoding = new System.Text.UTF8Encoding(false); } catch { }
+        }
+    }
+}
+"""
+
 CSPROJ = """<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>{tipo}</OutputType>
@@ -201,10 +235,14 @@ def compilar(fuentes, carpeta, cfg, ejecutar=False, args=()):
         mapa[os.path.basename(cs_abs)] = rel
         compilar_items.append(f'    <Compile Include="{cs_rel}" />')
 
-    paquetes = [f'    <PackageReference Include="{p}" Version="{v}" />' for p, v in cfg.get("paquetes", {}).items()]
     tipo = {"exe": "Exe", "lib": "Library"}.get(cfg.get("tipo", "exe"), "Exe")
+    if tipo == "Exe":
+        open(os.path.join(obj, "_nyansharp_inicio.cs"), "w", encoding="utf-8").write(INICIO_CS)
+        compilar_items.append('    <Compile Include="_nyansharp_inicio.cs" />')
+
+    paquetes = [f'    <PackageReference Include="{p}" Version="{v}" />' for p, v in cfg.get("paquetes", {}).items()]
     csproj = os.path.join(obj, f"{nombre}.csproj")
-    open(csproj, "w").write(CSPROJ.format(
+    open(csproj, "w", encoding="utf-8").write(CSPROJ.format(
         nombre=nombre, tipo=tipo, nullable="enable" if cfg.get("nullable") else "disable",
         compilar="\n".join(compilar_items), paquetes="\n".join(paquetes)))
 
@@ -212,7 +250,7 @@ def compilar(fuentes, carpeta, cfg, ejecutar=False, args=()):
     print(f"  (≧◡≦) compilando {nombre} ({n} archivo{'s' if n != 1 else ''}) ...")
     r = subprocess.run(
         ["dotnet", "build", "-c", "Release", "-nologo", "-v", "q", "-o", bin_dir, csproj],
-        capture_output=True, text=True,
+        capture_output=True, text=True, encoding=SALIDA_DOTNET, errors="replace",
         env={**os.environ, "DOTNET_CLI_TELEMETRY_OPTOUT": "1", "DOTNET_NOLOGO": "1"})
     if r.returncode != 0:
         print("  (>_<) gomen nasai~ hay errores:")
@@ -222,10 +260,10 @@ def compilar(fuentes, carpeta, cfg, ejecutar=False, args=()):
         mostrar_errores(r.stdout, mapa)
 
     if tipo == "Library":
-        print(f"  (✿◠‿◠) librería lista desu~  ->  {os.path.relpath(os.path.join(bin_dir, nombre + '.dll'))}")
+        print(f"  (✿◠‿◠) librería lista desu~  ->  {ruta_corta(os.path.join(bin_dir, nombre + '.dll'))}")
         return
     exe = os.path.join(bin_dir, nombre + (".exe" if os.name == "nt" else ""))
-    print(f"  (✿◠‿◠) listo desu~  ->  {os.path.relpath(exe)}")
+    print(f"  (✿◠‿◠) listo desu~  ->  {ruta_corta(exe)}")
     if ejecutar:
         print("  ─────────────────────────")
         sys.stdout.flush()
@@ -271,7 +309,7 @@ oshiro {nombre}
     }}
 }}
 """)
-    open(os.path.join(nombre, ".gitignore"), "w").write("bin/\n.nyabuild/\n")
+    open(os.path.join(nombre, ".gitignore"), "w", encoding="utf-8").write("bin/\n.nyabuild/\n")
     print(f"  (✿◠‿◠) proyecto {nombre} creado. Prueba:  cd {nombre} && nyac run")
 
 def add(paquete, version=None):
@@ -280,7 +318,7 @@ def add(paquete, version=None):
         sys.exit(f"  (;_;) aquí no hay {CONFIG}. Usa «nyac new» o créalo.")
     if not version:
         r = subprocess.run(["dotnet", "package", "search", paquete, "--exact-match", "--format", "json"],
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, encoding=SALIDA_DOTNET, errors="replace")
         try:
             datos = json.loads(r.stdout)
             version = datos["searchResult"][0]["packages"][0]["latestVersion"]
