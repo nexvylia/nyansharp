@@ -84,6 +84,7 @@ jobs:
           if ($out -match 'main\.nya:2:.*CS0029') { Write-Host "OK  mapa de errores" } else { Mal 'mapa de errores' $out }
 
           if ($fallos) { throw "$fallos pruebas fallan" }
+          exit 0   # el último nyac build falla a propósito; no heredar su código
 
       - name: nyac desde CMD
         shell: cmd
